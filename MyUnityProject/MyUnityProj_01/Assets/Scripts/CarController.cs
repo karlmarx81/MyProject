@@ -15,6 +15,10 @@ public class CarController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		//thisRb = gameObject.GetComponent<Rigidbody> ();
+		for (int i = 0; i < axleInfos.Count; i++) {
+			axleInfos [i].leftWheel.ConfigureVehicleSubsteps (5, 12, 15);
+			axleInfos [i].rightWheel.ConfigureVehicleSubsteps (5, 12, 15);
+		}
 	}
 	
 	// Update is called once per frame
@@ -29,6 +33,8 @@ public class CarController : MonoBehaviour {
 				
 				axleInfos [i].leftWheel.motorTorque = accel + brake;
 				axleInfos [i].rightWheel.motorTorque = accel + brake;
+
+
 			}
 
 			if (axleInfos [i].isSteeringWheel == true) {
