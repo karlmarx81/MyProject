@@ -405,6 +405,16 @@ Prefab:
       propertyPath: m_Mass
       value: 750
       objectReference: {fileID: 0}
+    - target: {fileID: 114228810360424060, guid: c121aa15da5e24620a570eb9281b04b9,
+        type: 2}
+      propertyPath: addForceMultiplier
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 54149375655832894, guid: c121aa15da5e24620a570eb9281b04b9,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c121aa15da5e24620a570eb9281b04b9, type: 2}
   m_IsPrefabParent: 0
@@ -811,6 +821,16 @@ Prefab:
         type: 2}
       propertyPath: rayLength
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114228810360424060, guid: c121aa15da5e24620a570eb9281b04b9,
+        type: 2}
+      propertyPath: addForceMultiplier
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 54149375655832894, guid: c121aa15da5e24620a570eb9281b04b9,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c121aa15da5e24620a570eb9281b04b9, type: 2}

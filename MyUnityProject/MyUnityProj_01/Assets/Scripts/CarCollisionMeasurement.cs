@@ -8,6 +8,8 @@ public class CarCollisionMeasurement : MonoBehaviour {
 	public Color color = Color.red;
 	public float rayLength = 3f;
 	public Text textUI;
+	public float addForceMultiplier;
+	public float relativeUpwardModifier;
 
 	Vector3 collisionNormal;
 	Vector3 relativeVel;
@@ -26,8 +28,8 @@ public class CarCollisionMeasurement : MonoBehaviour {
 		float damage = opponentMass * scalarValue;
 
 		if (collisionNormal != Vector3.zero) {
-			Debug.DrawRay (transform.position, collisionNormal * rayLength, color);
-			//Debug.DrawRay (transform.position, relativeVel * rayLength, color);
+			//Debug.DrawRay (transform.position, collisionNormal * rayLength, color); //collisionNormal Draw
+			Debug.DrawRay (transform.position, relativeVel * rayLength, color); //relativeVelocity Draw
 			textUI.text = "Force: " + scalarValue.ToString () + "\nName: " + opponentName + "\nDamage: " + damage;
 		}
 	}
@@ -39,6 +41,8 @@ public class CarCollisionMeasurement : MonoBehaviour {
 			relativeVel = col.relativeVelocity;
 			opponentName = col.gameObject.name;
 			opponentMass = col.rigidbody.mass;
+
+			thisRb.AddForce (new Vector3(col.relativeVelocity.x, col.relativeVelocity.y + relativeUpwardModifier, col.relativeVelocity.z) * addForceMultiplier, ForceMode.Impulse);
 		}
 	}
 }

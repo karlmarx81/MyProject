@@ -80,6 +80,9 @@ public class CollisionManager : MonoBehaviour {
 			car2.transform.position = originalPosOfCar2;
 			car1.transform.rotation = originalRotOfCar1;
 			car2.transform.rotation = originalRotOfCar2;
+
+			car1rb.velocity = Vector3.zero;
+			car2rb.velocity = Vector3.zero;
 		}
 
 		UpdateUI ();
