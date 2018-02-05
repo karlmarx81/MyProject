@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class AdjustCube : MonoBehaviour {
 
-	void Start () {
-
-	}	
-
-	void Update () {
-		
-	}
+	public Vector3 lastPos;
+	public Quaternion lastRot;
 
 	void OnDrawGizmos()
 	{
@@ -28,6 +23,9 @@ public class AdjustCube : MonoBehaviour {
 
 	public void ChangePosNRot()
 	{
+		lastPos = transform.position;
+		lastRot = transform.rotation;
+
 		transform.position = transform.position + transform.up * 5f;
 
 		Ray ray = new Ray (transform.position, transform.up * -1f);
@@ -43,5 +41,11 @@ public class AdjustCube : MonoBehaviour {
 				//Debug.Log (transform.name + ", hit Name: " + hit.transform.name + ", hit point: " + hit.point + ",hit normal: " + hit.normal);
 			}
 		}
+	}
+
+	public void UndoChangePosNRot()
+	{
+		transform.position = lastPos;
+		transform.rotation = lastRot;
 	}
 }

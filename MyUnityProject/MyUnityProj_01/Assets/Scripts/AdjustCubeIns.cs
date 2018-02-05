@@ -18,6 +18,13 @@ public class AdjustCubeIns : Editor {
 				AdjustCube objScript = obj.GetComponent<AdjustCube> ();						
 				objScript.ChangePosNRot ();
 			}
-		}	
+		}
+
+		if (GUILayout.Button ("Undo Pos/Rot")) {
+			foreach (var obj in Selection.gameObjects) {
+				AdjustCube objScript = obj.GetComponent<AdjustCube> ();						
+				objScript.UndoChangePosNRot ();
+			}
+		}
 	}
 }
