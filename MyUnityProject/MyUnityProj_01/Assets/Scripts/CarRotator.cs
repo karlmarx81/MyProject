@@ -15,9 +15,20 @@ public class CarRotator : MonoBehaviour {
 	float currentVerRotSpd;
 	float currentRollSpd;
 
-	void Start () {
-		
-	}	
+	[HideInInspector]
+	public bool isFacingGround;
+
+	void OnDrawGizmos ()
+	{
+		Gizmos.color = Color.green;
+		Gizmos.DrawRay (transform.position, -transform.up * 10f);
+
+		Gizmos.color = Color.blue;
+		Gizmos.DrawRay (transform.position, transform.forward * 2f);
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawRay (transform.position, transform.right * 2f);
+	}
 
 	void Update () {
 		float horInput = Input.GetAxis ("Horizontal");	
@@ -45,20 +56,39 @@ public class CarRotator : MonoBehaviour {
 		transform.Rotate (Vector3.right, Time.deltaTime * currentVerRotSpd);
 
 		if (isAutoRollAdjust == true) {
-			if (Input.GetKey(KeyCode.C)) {
+			if (Input.GetKey (KeyCode.C)) {
 				transform.Rotate (Vector3.forward, Time.deltaTime * -rollAdjustSpd, Space.Self);
 			}
-			if (Input.GetKey(KeyCode.Z)) {
+			if (Input.GetKey (KeyCode.Z)) {
 				transform.Rotate (Vector3.forward, Time.deltaTime * rollAdjustSpd, Space.Self);
 			}
-
-			Vector3 newRotVec = new Vector3 (transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
-			Quaternion newRot = Quaternion.Euler (newRotVec);
-
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, newRot, rollAdjustSpd);
-
-			Debug.Log ("z roll is: " + transform.localRotation.eulerAngles.z + ", angleDif value is: ");
-
 		}
+
+		Ray ray = new Ray (transform.position, transform.up * -1f); //Cast ray to the ground and check the car's downward is facing ground
+		RaycastHit hit;
+		if (Physics.Raycast (ray, out hit)) {
+			if (hit.transform.gameObject.tag == "Ground")
+				isFacingGround = true;			
+		} else
+			isFacingGround = false;
+
+		if (isAutoRollAdjust == true) {	
+			AdjustRoll ();
+		}
+	}
+
+	void AdjustRoll()
+	{
+		Vector3 newRotVec;
+		if (isFacingGround == true) {
+			newRotVec = new Vector3 (transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0); //if car's downward is facing ground, adjust roll's target value is 0
+		} else {
+			newRotVec = new Vector3 (transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 180); //else target value is 180
+		}
+		Quaternion newRot = Quaternion.Euler (newRotVec);
+
+		transform.rotation = Quaternion.RotateTowards(transform.rotation, newRot, rollAdjustSpd);
+
+		Debug.Log ("z roll is: " + transform.localRotation.eulerAngles.z + ", angleDif value is: ");
 	}
 }
