@@ -71,7 +71,9 @@ public class CharacterMovement : MonoBehaviour {
 
 	void MakeJump(float jumpAmount)
 	{
-		thisRb.AddForce (Vector3.up * jumpAmount, ForceMode.Impulse);
+		if (isOnGround == true) {
+			thisRb.AddForce (Vector3.up * jumpAmount * jumpForce, ForceMode.Impulse);
+		}
 	}
 
 	void CheckOnGround ()

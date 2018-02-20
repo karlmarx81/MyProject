@@ -13,6 +13,6 @@ public class CarRotatorInspector : Editor {
 		CarRotator myScript = (CarRotator)target;
 		Vector3 myCoord = new Vector3 (myScript.transform.rotation.eulerAngles.x, myScript.transform.rotation.eulerAngles.y, myScript.transform.rotation.eulerAngles.z);
 		EditorGUILayout.Vector3Field ("Local Rotation", myCoord);
-		EditorGUILayout.LabelField ("Z value", myScript.zAngle.ToString ());
+
 	}
 }
