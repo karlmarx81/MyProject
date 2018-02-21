@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour {
 		yInputAmount = Mathf.Clamp (yInputAmount, horRotationMinMax.x, horRotationMinMax.y);
 		Vector2 camControlVector = new Vector2 (xInputAmount, yInputAmount);
 
-		controller.MakeRotate (transform.rotation.eulerAngles);
+		controller.HeadingDirVec = transform.rotation.eulerAngles;
 
 		CameraFollow (camControlVector); //convert this statement to delegate pattern
 	}
