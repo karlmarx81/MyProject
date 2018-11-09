@@ -8,9 +8,12 @@ public class IncrementalCore : MonoBehaviour {
 	public Text moneyUI;
     public Text dpsUI;
 
-	public float updatePeriodSec;		
+    public float initMoney;
+    public float cheatMoneyAmount;	
 
-    float money;
+    [HideInInspector]
+    public float money;
+
     float moneyPerSecIndicator;
 
     float accumMoney;
@@ -18,7 +21,7 @@ public class IncrementalCore : MonoBehaviour {
     float dps;
 
 	void Start () {
-        money = 0f;
+        money = initMoney;
         dps = 0f;
         moneyPerSecIndicator = 0f; 
         nextTimeToCheckDPS = Time.time + 1f;
@@ -46,9 +49,15 @@ public class IncrementalCore : MonoBehaviour {
         }
     }
 
+    public void IncreaseMoneyCheat()
+    {
+        money += cheatMoneyAmount;
+    }
+
     void DisplayInfos()
     {
-        moneyUI.text = "$ " + Mathf.FloorToInt(money).ToString();
-        dpsUI.text = dps.ToString();
+        //moneyUI.text = "$ " + Mathf.FloorToInt(money).ToString();
+        moneyUI.text = "$ " + money.ToString(".000");
+        dpsUI.text = "Earning Per Sec : " + dps.ToString();
     }
 }

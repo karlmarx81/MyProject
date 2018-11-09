@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class Shop : MonoBehaviour {
 		
 	public Text currentPeopleUI;
+    public Text processSpdUI;
 	public Text earningUI;
+    public Text shopUI;
 
     public IncrementalCore incCore;
 
@@ -17,7 +19,13 @@ public class Shop : MonoBehaviour {
 
     float currentPpl;
 	float earning;
-	float accumulatedEarning;
+
+    public float[] maxCapAdd;
+    public float[] processSpdAdd;
+    public float[] earningPerPplAdd;
+    public float[] upgradeCost;
+
+    int currentLv = 0;
 
     bool isMaxxed;
     bool isEmpty;
@@ -46,6 +54,9 @@ public class Shop : MonoBehaviour {
             currentPpl -= peopleProcessSpd * Time.deltaTime;
             earning = (peopleProcessSpd * Time.deltaTime) * earningPerPeople;
             incCore.MakeMoney(earning);
+
+            //Debug.Log("Current People is : " + currentPpl);
+            //Debug.Log("Earning is : " + earning);
         }
     }
 
@@ -78,15 +89,39 @@ public class Shop : MonoBehaviour {
             currentPpl = 0f;
             isEmpty = true;
         }
-        else
+        else if (currentPpl > 1f)
         {
             isEmpty = false;
         }
     }
 
-	void DisplayInfos ()
+    public void IncreaseLevel()
+    {
+        if (currentLv < maxCapAdd.Length - 1)
+        {
+            if (upgradeCost[currentLv + 1] < incCore.money)
+            {
+                currentLv++;
+                incCore.money -= upgradeCost[currentLv];
+
+                maxCap += maxCapAdd[currentLv];
+                peopleProcessSpd += processSpdAdd[currentLv];
+                earningPerPeople += earningPerPplAdd[currentLv];
+
+                Debug.Log(this.transform.name + " Upgrade Success");
+            }
+            else
+            {
+                Debug.Log(this.transform.name + " : Hey! You are not ready!");
+            }
+        }
+    }
+
+    void DisplayInfos ()
 	{
-        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString ();
-        earningUI.text = "Earning Spd : " + Mathf.RoundToInt(earning).ToString ();
-	}
+        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString () + " / " + maxCap.ToString(); 
+        processSpdUI.text = "Process Spd : " + peopleProcessSpd.ToString();
+        earningUI.text = "Earning Spd : " + earning.ToString (".000");
+        shopUI.text = this.transform.name + " Lv. " + currentLv.ToString() + ", Next Upg. Cost : " + upgradeCost[currentLv + 1].ToString();
+    }
 }

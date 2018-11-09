@@ -8,13 +8,15 @@ public class Elevator : MonoBehaviour {
 	public Text transferAmountPerSecUI;
 	public Text receivingAmountPerSecUI;
 	public Text currentPeopleUI;
+    public Text elevUI;
 
     public Shop[] shopList;
 
 	public float maxCap;
-	public float transferSpd;	
-    	
-	public Lobby lobby;
+	public float transferSpd;
+
+    public IncrementalCore incCore;
+    public Lobby lobby;
 
     float currentPpl;
     float receivedPpl;
@@ -22,7 +24,13 @@ public class Elevator : MonoBehaviour {
     bool isMaxxed;
     bool isEmpty;
 
-	void Start () {
+    public float[] maxCapAdd;
+    public float[] transferSpdAdd;
+    public float[] upgradeCost;
+
+    int currentLv = 0;
+
+    void Start () {
         currentPpl = 0f;
         receivedPpl = 0f;
 
@@ -82,11 +90,32 @@ public class Elevator : MonoBehaviour {
         }
     }
 
+    public void IncreaseLevel()
+    {
+        if (currentLv < maxCapAdd.Length - 1)
+        {
+            if (upgradeCost[currentLv + 1] < incCore.money)
+            {
+                currentLv++;
+                incCore.money -= upgradeCost[currentLv];
+
+                maxCap += maxCapAdd[currentLv];
+                transferSpd += transferSpdAdd[currentLv];
+
+                Debug.Log("Elevator Upgrade Success");
+            }
+            else
+            {
+                Debug.Log("Elevator : Hey! You are not ready!");
+            }
+        }
+    }
+
     void DisplayInfos()
     {
-        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString();
-        receivingAmountPerSecUI.text = "Receiving People : " + Mathf.FloorToInt(receivedPpl).ToString();
+        //currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString();
+        //receivingAmountPerSecUI.text = "Receiving People : " + Mathf.FloorToInt(receivedPpl).ToString();
         transferAmountPerSecUI.text = "Transfer Spd : " + Mathf.FloorToInt(transferSpd).ToString();
-
+        elevUI.text = "Elev Lv. " + currentLv.ToString() + ", Next Upg. Cost : " + upgradeCost[currentLv + 1].ToString();
     }	
 }

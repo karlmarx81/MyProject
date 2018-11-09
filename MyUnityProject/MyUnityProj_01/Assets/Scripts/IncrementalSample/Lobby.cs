@@ -7,19 +7,27 @@ public class Lobby : MonoBehaviour {
 
 	public Text peopleIncomeUI;
 	public Text currentPeopleUI;
+    public Text LobbyUI;
 
-	public Elevator elevator;
+    public IncrementalCore incCore;
+    public Elevator elevator;
 
 	public float maxCap;
 	public float incomeSpd;
     public float initPpl;
 
-	float currentPpl;
+    public float[] maxCapAdd;
+    public float[] incomSpdAdd;
+    public float[] upgradeCost;
+	
+    int currentLv = 0;
+
+    float currentPpl;
     bool isMaxxed;
     bool isEmpty;
 
 
-	void Start () {
+    void Start () {
         currentPpl = initPpl;
         isMaxxed = false;
         isEmpty = true;
@@ -30,8 +38,6 @@ public class Lobby : MonoBehaviour {
         GatherPeople();
         DisplayInfos();
     }
-
-   
 
     void GatherPeople ()
     {
@@ -74,11 +80,33 @@ public class Lobby : MonoBehaviour {
             pplAmount = sendSpd * Time.deltaTime;
         }
         return pplAmount;
-    }	
+    }
+
+    public void IncreaseLevel()
+    {
+        if (currentLv < maxCapAdd.Length - 1)
+        {
+            if (upgradeCost[currentLv + 1] < incCore.money)
+            {
+                currentLv++;
+                incCore.money -= upgradeCost[currentLv];
+
+                maxCap += maxCapAdd[currentLv];
+                incomeSpd += incomSpdAdd[currentLv];
+
+                Debug.Log("Lobby Upgrade Success");
+            }
+            else
+            {
+                Debug.Log("Lobby : Hey! You are not ready!");
+            }
+        }
+    }
 
 	void DisplayInfos ()
 	{
-        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString();
+        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString() + " / " + maxCap.ToString();
         peopleIncomeUI.text = "People Income : " + Mathf.FloorToInt(incomeSpd).ToString();
+        LobbyUI.text = "Lobby Lv. " + currentLv.ToString() + ", Next Upg. Cost : " + upgradeCost[currentLv + 1].ToString();
 	}
 }
