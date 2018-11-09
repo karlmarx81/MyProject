@@ -3,84 +3,90 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
 public class Shop : MonoBehaviour {
-	public string shopName;
-	public float maxCapacity;
-	public float peopleProcessPerSec;
-	public float earningPerPeople;	
-
+		
 	public Text currentPeopleUI;
 	public Text earningUI;
 
-	[HideInInspector]
-	public float currentPeople;
+    public IncrementalCore incCore;
 
-	float remainingPeople;
+    public float maxCap;
+    public float peopleProcessSpd;
+    public float earningPerPeople;
+    public float initPpl;
+
+    float currentPpl;
 	float earning;
 	float accumulatedEarning;
 
-//	public Shop (string _shopName, int _maxCapacity, int _peopleProcessPerSec, float _earningPerSec) {
-//		shopName = _shopName;
-//		maxCapacity = _maxCapacity;
-//		peopleProcessPerSec = _peopleProcessPerSec;
-//		earningPerSec = _earningPerSec;
-//	}
+    bool isMaxxed;
+    bool isEmpty;
+    float wastedPpl;
 
 	void Start ()
 	{
-		remainingPeople = 0f;
+        earning = 0f;
+        currentPpl = initPpl;
+        wastedPpl = 0f;
+        isMaxxed = false;
+        isEmpty = true;
 	}
 
 	void Update ()
 	{
-		DisplayInfos ();
-		Working ();
+        CheckCapacity();
+        ProcessPeople();
+        DisplayInfos ();
 	}
 
-	public void Receiving (float peopleIncome)
-	{
-		currentPeople += peopleIncome * Time.deltaTime;
-	}
+    void ProcessPeople ()
+    {
+        if (isEmpty == false)
+        {
+            currentPpl -= peopleProcessSpd * Time.deltaTime;
+            earning = (peopleProcessSpd * Time.deltaTime) * earningPerPeople;
+            incCore.MakeMoney(earning);
+        }
+    }
 
-	public void Working ()
-	{
-		if (currentPeople > maxCapacity) {
-			remainingPeople += (currentPeople - maxCapacity);
-			currentPeople = maxCapacity;
-		}
+    public void ReceivePeople (float amount)
+    {
+        if (isMaxxed == false)
+        {
+            currentPpl += amount;    
+        }
+        else if (isMaxxed == true)
+        {
+            wastedPpl += amount;
+        }
+    }
 
-		if (currentPeople > 0f) {
-			currentPeople -= peopleProcessPerSec * Time.deltaTime;
+    void CheckCapacity()
+    {
+        if (currentPpl >= maxCap)
+        {
+            currentPpl = maxCap;
+            isMaxxed = true;
+        }
+        else
+        {
+            isMaxxed = false;
+        }
 
-			if (currentPeople < 0f) {
-				currentPeople = 0f;
-			}
-		}
-	}
-
-	public float Earning ()
-	{
-		if (currentPeople >= peopleProcessPerSec) {
-			earning = peopleProcessPerSec * earningPerPeople * Time.deltaTime;
-			//Debug.Log ("First Routine : " + earning);
-		}
-		else if (currentPeople < peopleProcessPerSec) { 			
-			earning = (peopleProcessPerSec - currentPeople) * earningPerPeople * Time.deltaTime;
-			//Debug.Log ("Second Routine : " + earning);
-		}
-		else {
-			earning = 0f;
-			//Debug.Log ("Last Routine : " + earning);
-		}
-
-		accumulatedEarning += earning;
-		return earning;
-	}
+        if (currentPpl <= 0f)
+        {
+            currentPpl = 0f;
+            isEmpty = true;
+        }
+        else
+        {
+            isEmpty = false;
+        }
+    }
 
 	void DisplayInfos ()
 	{
-		currentPeopleUI.text = "Current People : " + Mathf.RoundToInt(currentPeople).ToString ();
-		earningUI.text = "Earning per frame : " + Mathf.RoundToInt(earning).ToString ();
+        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString ();
+        earningUI.text = "Earning Spd : " + Mathf.RoundToInt(earning).ToString ();
 	}
 }

@@ -5,35 +5,50 @@ using UnityEngine.UI;
 
 public class IncrementalCore : MonoBehaviour {
 
-	float money;
-	float moneyPerSecIndicator;
-
 	public Text moneyUI;
-	public GameObject totalEarningPerSecUI;
-	public GameObject customerSatisfactionUI;
-	public GameObject elevatorUI;
-	public GameObject lobbyClickerButton;
-	public GameObject elevatorClickerButton;
+    public Text dpsUI;
 
-	public float updatePeriodSec;
-	public Shop[] shops;
+	public float updatePeriodSec;		
 
-	int numberOfShops;
+    float money;
+    float moneyPerSecIndicator;
+
+    float accumMoney;
+    float nextTimeToCheckDPS;
+    float dps;
 
 	void Start () {
-		Init ();
+        money = 0f;
+        dps = 0f;
+        moneyPerSecIndicator = 0f; 
+        nextTimeToCheckDPS = Time.time + 1f;
+        accumMoney = 0f;
 	}
-
-	void Init () 
-	{
-		money = 0f;
-		moneyPerSecIndicator = 0f;
-
-		numberOfShops = shops.Length;
-	}	
-
+	
 	void Update () {
-		
-		moneyUI.text = "$ " + Mathf.RoundToInt(money).ToString();
+        DisplayInfos();	
+        CheckDPS(); 
 	}
+
+    public void MakeMoney (float earning)
+    {
+        money += earning;
+        accumMoney += earning;
+    }
+
+    void CheckDPS()
+    {
+        if (Time.time > nextTimeToCheckDPS)
+        {
+            nextTimeToCheckDPS = Time.time + 1f;
+            dps = accumMoney;
+            accumMoney = 0f;
+        }
+    }
+
+    void DisplayInfos()
+    {
+        moneyUI.text = "$ " + Mathf.FloorToInt(money).ToString();
+        dpsUI.text = dps.ToString();
+    }
 }

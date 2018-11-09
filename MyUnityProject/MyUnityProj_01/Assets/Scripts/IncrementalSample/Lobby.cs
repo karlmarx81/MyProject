@@ -10,49 +10,75 @@ public class Lobby : MonoBehaviour {
 
 	public Elevator elevator;
 
-	public float maxCapacity;
-	public float peopleIncomePerSec;
+	public float maxCap;
+	public float incomeSpd;
+    public float initPpl;
 
-	[HideInInspector]
-	public float currentPeople;
+	float currentPpl;
+    bool isMaxxed;
+    bool isEmpty;
+
 
 	void Start () {
-		
+        currentPpl = initPpl;
+        isMaxxed = false;
+        isEmpty = true;
 	}
 	
 	void Update () {
-		IncreasePeople ();
-		DisplayInfos ();
-	}
+        CheckCapacity();
+        GatherPeople();
+        DisplayInfos();
+    }
 
-	void IncreasePeople () {
-		currentPeople += peopleIncomePerSec * Time.deltaTime;
-	}
+   
 
-	public float SendPeopleToElevator (float elevRequest)
-	{
-		float peopleToTransfer = 0f;
-		elevRequest *= Time.deltaTime;
+    void GatherPeople ()
+    {
+        if (isMaxxed == false)
+        {
+            currentPpl += incomeSpd * Time.deltaTime;
+        }
+    }
 
-		if (currentPeople >= elevRequest) {
-			currentPeople -= elevRequest;
-		} else if (currentPeople < elevRequest && currentPeople > 0f) {
-			currentPeople = 0f;
-			peopleToTransfer = elevRequest - currentPeople;
-		} else {
-			peopleToTransfer = 0f;
-		}
+    void CheckCapacity ()
+    {
+        if (currentPpl >= maxCap)
+        {
+            currentPpl = maxCap;
+            isMaxxed = true;
+        }
+        else
+        {
+            isMaxxed = false;
+        }
 
-		if (currentPeople >= 0f) {
-			currentPeople -= peopleToTransfer;
-		}
+        if (currentPpl <= 0f)
+        {
+            currentPpl = 0f;
+            isEmpty = true;
+        }
+        else
+        {
+            isEmpty = false;
+        }
+    }
 
-		return peopleToTransfer;
-	}
+    public float SendPeopleToElevator (float sendSpd)
+    {
+        float pplAmount = 0f;
+
+        if (isEmpty == false)
+        {
+            currentPpl -= sendSpd * Time.deltaTime;
+            pplAmount = sendSpd * Time.deltaTime;
+        }
+        return pplAmount;
+    }	
 
 	void DisplayInfos ()
 	{
-		currentPeopleUI.text = "Current People : " + Mathf.RoundToInt(currentPeople).ToString ();
-		peopleIncomeUI.text = "People Income per frame : " + Mathf.RoundToInt(peopleIncomePerSec * Time.deltaTime).ToString ();
+        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString();
+        peopleIncomeUI.text = "People Income : " + Mathf.FloorToInt(incomeSpd).ToString();
 	}
 }

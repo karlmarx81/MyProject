@@ -9,60 +9,84 @@ public class Elevator : MonoBehaviour {
 	public Text receivingAmountPerSecUI;
 	public Text currentPeopleUI;
 
-	public float maxCapacity;
-	public float receivingAmountPerSec;
-	public float transferAmountPerSec;
+    public Shop[] shopList;
 
-	public IncrementalCore incCore;
+	public float maxCap;
+	public float transferSpd;	
+    	
 	public Lobby lobby;
 
-	float currentPeople;
-	float currentTransfer;
+    float currentPpl;
+    float receivedPpl;
 
-	void Start () {			
-		currentTransfer = transferAmountPerSec;
+    bool isMaxxed;
+    bool isEmpty;
+
+	void Start () {
+        currentPpl = 0f;
+        receivedPpl = 0f;
+
+        isMaxxed = false;
+        isEmpty = true;
 	}
 
 	void Update () {
-		if (currentPeople < maxCapacity) {
-			currentPeople += lobby.SendPeopleToElevator (receivingAmountPerSec);
-		} else if (currentPeople > maxCapacity) {
-			currentPeople = maxCapacity;
-		}
-
-		if (currentPeople > transferAmountPerSec * Time.deltaTime) {
-			currentTransfer = transferAmountPerSec * Time.deltaTime;
-		} else if (currentPeople < transferAmountPerSec * Time.deltaTime) {
-			currentTransfer = (transferAmountPerSec * Time.deltaTime) - currentPeople;
-		} else {
-			currentTransfer = 0f;
-		}
-
-		currentPeople -= currentTransfer; 
-
-		DisplayInfos ();
+        CheckCapacity();
+        TakePeopleFromLobby();
+        SendPeopleToShop();
+        DisplayInfos();
 	}
 
+    void CheckCapacity()
+    {
+        if (currentPpl >= maxCap)
+        {
+            currentPpl = maxCap;
+            isMaxxed = true;
+        }
+        else
+        {
+            isMaxxed = false;
+        }
 
+        if (currentPpl <= 0f)
+        {
+            currentPpl = 0f;
+            isEmpty = true;
+        }
+        else
+        {
+            isEmpty = false;
+        }
+    }
 
-	public void SetDistribution ()
-	{
-		
-	}
+    void TakePeopleFromLobby()
+    {
+        if (isMaxxed == false)
+        {
+            receivedPpl = lobby.SendPeopleToElevator(transferSpd);
+            currentPpl += receivedPpl;
+        }
+    }
 
-	public bool CheckElevatorIsFull ()
-	{
-		return false;
-	}
+    void SendPeopleToShop()
+    {
+        if (isEmpty == false)
+        {
+            currentPpl -= transferSpd * Time.deltaTime;
+        }
 
-	void Working ()
-	{
-		
-	}
+        for (int i = 0; i < shopList.Length; i++)
+        {
+            shopList[i].ReceivePeople(transferSpd * Time.deltaTime / shopList.Length);
+        }
+    }
 
-	void DisplayInfos ()
-	{
-		currentPeopleUI.text = "Current People : " + Mathf.RoundToInt(currentPeople).ToString ();
-		transferAmountPerSecUI.text = "People Transfer per frame : " + Mathf.RoundToInt(currentTransfer * Time.deltaTime).ToString ();
-	}
+    void DisplayInfos()
+    {
+        currentPeopleUI.text = "Current People : " + Mathf.FloorToInt(currentPpl).ToString();
+        receivingAmountPerSecUI.text = "Receiving People : " + Mathf.FloorToInt(receivedPpl).ToString();
+        transferAmountPerSecUI.text = "Transfer Spd : " + Mathf.FloorToInt(transferSpd).ToString();
+
+    }	
 }
